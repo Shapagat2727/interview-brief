@@ -71,8 +71,13 @@ def generate_prep_brief(
         raise ValueError("CV text is too short or empty.")
 
     prompt = build_prompt(jd_text, cv_text)
-    response = call_openai(prompt, model=model)
+    user_propmt = prompt.get("user")
+    system_prompt = prompt.get("system")
 
+    assert user_propmt and system_prompt, "Prompts cannot be empty."
+
+    response = call_openai(system_prompt, user_propmt, model=model)
+    
     if not isinstance(response, dict):
         raise ValueError("LLM response is not a valid JSON object.")
 

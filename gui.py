@@ -235,7 +235,12 @@ class PrepWorker(QThread):
             jd = fetch_jd_text(self.jd_url or None, self.jd_text or None)
             cv = read_cv_text(self.cv_path)
             prompt = build_prompt(jd, cv)
-            result = call_openai(prompt, model=self.model)
+            user_propmt = prompt.get("user")
+            system_prompt = prompt.get("system")
+
+            assert user_propmt and system_prompt, "Prompts cannot be empty."
+
+            result = call_openai(system_prompt, user_propmt, model=self.model)
             md = render_markdown(result)
 
             # Save files

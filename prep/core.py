@@ -51,31 +51,34 @@ def read_cv_text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore").strip()
 
 
-def build_prompt(jd_text: str, cv_text: str) -> str:
-    return f"""
-You are an elite Interview Prep Assistant. You receive a Job Description (JD) and a Candidate CV.
-Your task: produce a concise, *actionable* prep brief tailored to the candidate.
-
-Return JSON with these keys only:
-- "role_summary": 2–3 sentences on what this role really needs
-- "top_required_skills": list of 5–8 skills (ranked, short labels)
-- "strong_overlaps": list of bullet points mapping CV strengths to JD needs
-- "gaps_and_risks": list of gaps likely to be probed in interviews
-- "likely_tech_questions": list of 6–10 questions (mix of conceptual and hands-on)
-- "behavioral_questions": list of 4–6 questions tied to JD themes
-- "talking_points": list of 5–8 high-impact points the candidate should emphasize
-- "quick_upskilling_plan": 3–5 concrete mini-tasks (≤2 hours each) to cover gaps before interview
-
-Rules:
-- Keep answers tight and skimmable.
-- Prefer the candidate's actual experience; do not invent.
-- If a JD skill is missing in the CV, call it out in "gaps_and_risks" and propose how to handle it.
-
-Return ONLY a valid JSON object with exactly those keys. Do not add markdown, commentary, or code fences.
-
-=== JOB_DESCRIPTION ===
-{jd_text}
-
-=== CANDIDATE_CV ===
-{cv_text}
-""".strip()
+def build_prompt(jd_text: str, cv_text: str) -> dict:
+    system_prompt = (
+        "You are an elite Interview Prep Assistant. You receive a Job Description (JD) and a Candidate CV. "
+        "Your task: produce a concise, actionable prep brief tailored to the candidate.\n\n"
+        "Return JSON as in this example:\n"
+        "```json\n"
+        "{\n"
+        '  "top_required_skills": ["Skill1", "Skill2"],\n'
+        '  "strong_overlaps": ["Overlap1", "Overlap2"],\n'
+        '  "gaps_and_risks": ["Gap1", "Risk1"],\n'
+        '  "likely_tech_questions": ["Tech Question1", "Tech Question2"],\n'
+        '  "behavioral_questions": ["Behavioral Question1", "Behavioral Question2"],\n'
+        '  "talking_points": ["Point1", "Point2"],\n'
+        '  "quick_upskilling_plan": ["Task1", "Task2"],\n'
+        '  "role_summary": "Concise summary of the role."\n'
+        "}\n"
+        "```\n\n"
+        "Guidelines:\n"
+        "- Extract top required skills from the JD.\n"
+        "- Identify strong overlaps between the CV and JD.\n"
+        "- List gaps and risks based on the CV vs JD.\n"
+        "- Generate likely technical and behavioral questions.\n"
+        "- Suggest high-impact talking points for the interview.\n"
+        "- Propose a quick upskilling plan (tasks ≤2h).\n"
+        "- Ensure the JSON is valid and parsable.\n"
+    )
+    user_prompt = (
+        f"Job Description:\n{jd_text}\n\nCandidate CV:\n{cv_text}\n\n"
+        "Now, produce the prep brief as specified in JSON format."
+    )
+    return {"system": system_prompt, "user": user_prompt}
