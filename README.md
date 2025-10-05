@@ -10,5 +10,5 @@ Tool generates a tailored interview preparation brief by analyzing a Job Descrip
 - **BeautifulSoup**: HTML parsing.
 
 
-<video src="https://github.com/Shapagat2727/interview-brief/examples/demo.mp4"
+<video src="examples/demo.mp4"
        width="640" controls muted playsinline></video>
