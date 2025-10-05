@@ -57,7 +57,9 @@ def generate(
 
         if not os.getenv("OPENAI_API_KEY"):
             # Warn — but proceed in case the LLM wrapper uses other auth
-            gr.Warning("OPENAI_API_KEY is not set. Put it in a .env or the environment.")
+            gr.Warning(
+                "OPENAI_API_KEY is not set. Put it in a .env or the environment."
+            )
 
         _validate_inputs(jd_url, jd_text, cv_file, out_base_text)
 
@@ -108,10 +110,10 @@ def generate(
         progress(1.0, desc="Complete")
         return (
             md_text_rendered,
-            result,                         # JSON viewer in Gradio
+            result,  # JSON viewer in Gradio
             status,
-            str(json_path),                 # for gr.File
-            str(md_path),                   # for gr.File
+            str(json_path),  # for gr.File
+            str(md_path),  # for gr.File
         )
     except gr.Error:
         # validation or user-facing errors already formatted
@@ -121,12 +123,16 @@ def generate(
 
 
 with gr.Blocks(title=APP_TITLE, theme=gr.themes.Soft()) as demo:
-    gr.Markdown(f"# {APP_TITLE}\nUpload a CV, add a JD (URL or text), pick a model, and generate a focused prep brief.")
+    gr.Markdown(
+        f"# {APP_TITLE}\nUpload a CV, add a JD (URL or text), pick a model, and generate a focused prep brief."
+    )
 
     with gr.Row():
         with gr.Column():
             with gr.Group():
-                jd_url = gr.Textbox(label="JD URL", placeholder="https://company.com/job/123")
+                jd_url = gr.Textbox(
+                    label="JD URL", placeholder="https://company.com/job/123"
+                )
                 jd_text = gr.Textbox(
                     label="JD Text",
                     placeholder="Paste JD text here (leave empty if using URL).",
